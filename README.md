@@ -4,12 +4,38 @@ ANSI-colored terminal status line for Claude Code. Model, cost, context, git, ra
 
 ## Install
 
+### Option A: Git submodule (recommended)
+
 ```bash
-# load as plugin (enables /statusline:theme skill)
+git submodule add https://github.com/brianclaridge/statusline .claude/statusline
+```
+
+Then add `--plugin-dir` to your claude invocation:
+
+```bash
+claude --plugin-dir .claude/statusline
+```
+
+Add to `.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cd \"$CLAUDE_PROJECT_DIR/.claude/statusline\" && uv run src/statusline.py",
+    "padding": 2
+  }
+}
+```
+
+### Option B: Standalone clone
+
+```bash
+git clone https://github.com/brianclaridge/statusline /path/to/statusline
 claude --plugin-dir /path/to/statusline
 ```
 
-Add to your `settings.json` (or `.claude/settings.json`):
+Add to `settings.json` (user or project):
 
 ```json
 {
@@ -21,11 +47,9 @@ Add to your `settings.json` (or `.claude/settings.json`):
 }
 ```
 
-Replace `/path/to/statusline` with the absolute path to this directory.
-
 ## Themes
 
-5 built-in themes: `default`, `dracula`, `gruvbox`, `nord`, `tokyo`
+5 built-in: `default`, `dracula`, `gruvbox`, `nord`, `tokyo`
 
 ```bash
 /statusline:theme              # interactive picker (requires --plugin-dir)

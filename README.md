@@ -47,6 +47,25 @@ Add to `settings.json` (user or project):
 }
 ```
 
+### Option C: GitHub marketplace
+
+```bash
+/plugin marketplace add brianclaridge/statusline
+/plugin install statusline@brianclaridge-statusline
+```
+
+Then add the `statusLine` command to `settings.json`. The plugin is cached at `~/.claude/plugins/cache/`, so use `${CLAUDE_PLUGIN_ROOT}`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cd \"${CLAUDE_PLUGIN_ROOT}\" && uv run src/statusline.py",
+    "padding": 2
+  }
+}
+```
+
 ## Themes
 
 5 built-in: `default`, `dracula`, `gruvbox`, `nord`, `tokyo`

@@ -1,0 +1,54 @@
+description: Purple/cyan/pink accents inspired by the Dracula color scheme. Slate neutrals with lime positives, pink negatives, and gold warnings.
+labels:
+  sep: "\u00BB"
+bar:
+  fill: "\u25B0"
+  empty: "\u25B1"
+  width: 10
+  left: "\u27EA"
+  right: "\u27EB"
+colors:
+  model: bold-lavender
+  dim: slate
+  sep: mauve
+  duration: ice
+  cost: bold-orange
+  added: lime
+  removed: pink
+  context_ok: lime
+  context_warn: gold
+  context_crit: pink
+  git_branch: lavender
+  git_sha: steel
+  git_dirty: gold
+  git_clean: lime
+  git_staged: lime
+  git_unstaged: gold
+  git_untracked: aqua
+  git_ahead: green
+  git_behind: coral
+  session_id: denim
+  version: aqua
+  tokens_in: sky
+  tokens_out: teal
+  cache: orange
+  api_duration: peach
+  exceeds_200k: pink
+  cwd: cadet
+  project_dir: periwinkle
+  plan: silver
+  plan_title: mauve
+  transcript_path: steel
+  current_dir: khaki
+  added_dirs: sage
+  context_window_size: silver
+  turn_input: denim
+  turn_output: aqua
+  cache_creation: peach
+  model_id: steel
+  repo_url: cadet
+  theme: aqua
+  rate_ok: lime
+  rate_warn: gold
+  rate_crit: pink
+  rate_reset: aqua

@@ -1,0 +1,54 @@
+description: Cool neon palette inspired by Tokyo Night. Lavender/cornflower primaries with lime greens and pink accents. Slate neutrals for a dark cyberpunk aesthetic.
+labels:
+  sep: "\u203A"
+bar:
+  fill: "\u25C6"
+  empty: "\u25C7"
+  width: 10
+  left: "\u27E8"
+  right: "\u27E9"
+colors:
+  model: bold-lavender
+  dim: slate
+  sep: periwinkle
+  duration: ice
+  cost: bold-gold
+  added: lime
+  removed: pink
+  context_ok: lime
+  context_warn: wheat
+  context_crit: pink
+  git_branch: blue
+  git_sha: cadet
+  git_dirty: wheat
+  git_clean: lime
+  git_staged: lime
+  git_unstaged: wheat
+  git_untracked: lavender
+  git_ahead: teal
+  git_behind: mauve
+  session_id: sand
+  version: sky
+  tokens_in: cornflower
+  tokens_out: aqua
+  cache: coral
+  api_duration: orange
+  exceeds_200k: pink
+  cwd: denim
+  project_dir: sage
+  plan: silver
+  plan_title: gold
+  transcript_path: periwinkle
+  current_dir: khaki
+  added_dirs: cadet
+  context_window_size: silver
+  turn_input: steel
+  turn_output: aqua
+  cache_creation: coral
+  model_id: denim
+  repo_url: steel
+  theme: sky
+  rate_ok: lime
+  rate_warn: wheat
+  rate_crit: pink
+  rate_reset: periwinkle

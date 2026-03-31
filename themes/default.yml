@@ -1,0 +1,54 @@
+description: Clean blue-accented theme with neutral grays. Primary accent is blue for model/branch, orange for cost/cache, green/coral for additions/removals.
+labels:
+  sep: "~"
+bar:
+  width: 25
+  fill: "\u2588"
+  empty: "\u2591"
+  left: "["
+  right: "]"
+colors:
+  model: bold-blue
+  dim: gray
+  sep: silver
+  duration: white
+  cost: bold-orange
+  added: green
+  removed: coral
+  context_ok: green
+  context_warn: gold
+  context_crit: coral
+  git_branch: cornflower
+  git_sha: periwinkle
+  git_dirty: gold
+  git_clean: green
+  git_staged: green
+  git_unstaged: gold
+  git_untracked: sky
+  git_ahead: aqua
+  git_behind: mauve
+  session_id: sand
+  version: lavender
+  tokens_in: blue
+  tokens_out: teal
+  cache: orange
+  api_duration: wheat
+  exceeds_200k: coral
+  cwd: denim
+  project_dir: cadet
+  plan: ice
+  plan_title: khaki
+  transcript_path: sand
+  current_dir: sage
+  added_dirs: cadet
+  context_window_size: silver
+  turn_input: denim
+  turn_output: steel
+  cache_creation: wheat
+  model_id: periwinkle
+  repo_url: steel
+  theme: lavender
+  rate_ok: green
+  rate_warn: gold
+  rate_crit: coral
+  rate_reset: sand

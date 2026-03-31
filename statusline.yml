@@ -1,0 +1,144 @@
+terminal_width: auto
+max_width: 80
+padding: 3
+space_character: " "
+
+cache:
+  file: ".data/cache.json"
+  git_interval_ms: 10000
+
+theme_file: ".data/.current-theme"
+
+bar:
+  width: 25
+  fill: "\u2588"
+  empty: "\u2591"
+  left: "["
+  right: "]"
+
+# visible_if expressions — conditionally show/hide lines
+# Operators: ==, !=, >, <, >=, <=
+# Compound: && (and), || (or)
+# Values: field references, numbers, booleans (true/false), quoted strings
+# Examples:
+#   visible_if: "project_dir!=current_dir"       # hide when same
+#   visible_if: "exceeds_200k==true"              # show only when over 200k
+#   visible_if: "context_pct>=50"                 # show when context half used
+#   visible_if: "rate_5h_pct>=80||rate_7d_pct>=80"  # show when either rate high
+
+lines:
+  - left: "\U0001F916{s}{model_name}{s}\U0001F4E6{s}{version}{s}\U0001F3A8{s}{theme}"
+  - left: "\u23F0{s}{duration}{s}\U0001F4B0{s}{cost}{s}\U0001F4DD{s}{lines_added}{s}{lines_removed}{s}\u231B{s}{api_duration}"
+  - left: "\U0001F9E0{s}{context_bar}{s}{context_pct}{s}{sep}{s}{context_used}"
+  - left: "\u26FD{s}{rate_5h_bar}{s}{rate_5h_pct}{s}{sep}{s}[5h]{s}resets{s}{rate_5h_reset}"
+  - left: "\U0001F4B8{s}{rate_7d_bar}{s}{rate_7d_pct}{s}{sep}{s}[7d]{s}resets{s}{rate_7d_reset}"
+  - left: "\U0001F4C1{s}{project_dir}"
+  - left: "\U0001F4C2{s}{current_dir}"
+    visible_if: "project_dir!=current_dir"
+  - left: "\U0001F9EA{s}{repo_url}"
+  - left: "\U0001F33F{s}{git_branch}{s}{git_sha}{s}{git_dirty}{s}{git_staged}{s}{git_unstaged}{s}{git_untracked}{s}{git_ahead}{s}{git_behind}"
+  - left: "\U0001F511{s}{session_id_short}{s}{sep}{s}\U0001F516{s}{session_name}"
+  - left: "\U0001F40C{s}{plan}"
+  - left: "\U0001F4DC{s}{plan_title}"
+  - left: ""
+
+  # Uncomment to enable:
+  # - left: "{model_id}"                      # full model identifier
+  # - left: "{transcript_path}"               # session transcript path
+  # - left: "{current_dir}{s}{added_dirs}"    # workspace directories
+  # - left: "{context_window_size}"           # total context window size
+  # - left: "{turn_input}{s}{turn_output}"    # current turn token counts
+  # - left: "{cache_creation}"                # cache creation tokens
+  # - left: "\u2800"
+
+defaults:
+  session_id: "--"
+  session_name: "--"
+  version: "--"
+  output_style: "--"
+  cwd: "--"
+  project_dir: "--"
+  transcript_path: "--"
+  current_dir: "--"
+  model_id: "--"
+  repo_url: "--"
+  git_branch: "--"
+  git_sha: "--"
+  git_dirty: "--"
+  git_staged: "+0"
+  git_unstaged: "~0"
+  git_untracked: "?0"
+  git_ahead: "0\u2191"
+  git_behind: "0\u2193"
+  exceeds_200k: "--"
+  plan: "--"
+  plan_title: "--"
+  theme: "--"
+  added_dirs: "--"
+  context_window_size: "0"
+  turn_input: "0\u2193"
+  turn_output: "0\u2191"
+  cache_creation: "0\u270E"
+  lines_added: "+0"
+  lines_removed: "-0"
+  total_input: "0\u2193"
+  total_output: "0\u2191"
+  cache_read: "0\u27F3"
+  duration: "0s"
+  api_duration: "0s"
+  rate_5h_pct: "--%"
+  rate_7d_pct: "--%"
+  rate_5h_bar: "--"
+  rate_7d_bar: "--"
+  rate_5h_reset: "--"
+  rate_7d_reset: "--"
+
+ansi_map:
+  # Blues
+  blue: "38;5;75"
+  bold-blue: "1;38;5;75"
+  cornflower: "38;5;111"
+  sky: "38;5;117"
+  steel: "38;5;109"
+  ice: "38;5;153"
+  teal: "38;5;80"
+  aqua: "38;5;79"
+  # Greens
+  green: "38;5;77"
+  olive: "38;5;142"
+  lime: "38;5;149"
+  sage: "38;5;108"
+  # Warm
+  gold: "38;5;178"
+  wheat: "38;5;179"
+  bold-gold: "1;38;5;179"
+  amber: "38;5;214"
+  bold-amber: "1;38;5;214"
+  orange: "38;5;215"
+  bold-orange: "1;38;5;215"
+  rust: "38;5;208"
+  bold-rust: "1;38;5;208"
+  cream: "38;5;223"
+  # Reds / Pinks
+  coral: "38;5;209"
+  red: "38;5;167"
+  pink: "38;5;204"
+  mauve: "38;5;175"
+  # Purples
+  lavender: "38;5;141"
+  bold-lavender: "1;38;5;141"
+  # Neutrals
+  gray: "38;5;245"
+  white: "38;5;253"
+  slate: "38;5;60"
+  silver: "38;5;188"
+  sand: "38;5;144"
+  # Extended palette
+  denim: "38;5;68"
+  cadet: "38;5;73"
+  terracotta: "38;5;131"
+  dijon: "38;5;136"
+  khaki: "38;5;143"
+  periwinkle: "38;5;146"
+  peach: "38;5;180"
+  chartreuse: "38;5;114"

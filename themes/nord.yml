@@ -1,0 +1,54 @@
+description: Arctic blue/frost palette inspired by Nord. Gray neutrals with frost blues and aurora accents. Sage positives, terracotta negatives, wheat warnings.
+labels:
+  sep: "\u00B7"
+bar:
+  fill: "\u25A0"
+  empty: "\u25A1"
+  width: 10
+  left: "\u27E6"
+  right: "\u27E7"
+colors:
+  model: bold-blue
+  dim: gray
+  sep: steel
+  duration: silver
+  cost: bold-orange
+  added: sage
+  removed: terracotta
+  context_ok: sage
+  context_warn: wheat
+  context_crit: terracotta
+  git_branch: cornflower
+  git_sha: denim
+  git_dirty: wheat
+  git_clean: sage
+  git_staged: sage
+  git_unstaged: wheat
+  git_untracked: periwinkle
+  git_ahead: cadet
+  git_behind: terracotta
+  session_id: steel
+  version: mauve
+  tokens_in: blue
+  tokens_out: cadet
+  cache: peach
+  api_duration: dijon
+  exceeds_200k: terracotta
+  cwd: khaki
+  project_dir: steel
+  plan: ice
+  plan_title: cornflower
+  transcript_path: denim
+  current_dir: sand
+  added_dirs: sage
+  context_window_size: silver
+  turn_input: blue
+  turn_output: cadet
+  cache_creation: peach
+  model_id: periwinkle
+  repo_url: denim
+  theme: cornflower
+  rate_ok: sage
+  rate_warn: wheat
+  rate_crit: terracotta
+  rate_reset: cornflower

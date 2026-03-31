@@ -1,0 +1,54 @@
+description: Warm retro palette inspired by Gruvbox. Amber/rust primaries with olive greens and muted reds. Earthy tones throughout with cream text on dark backgrounds.
+labels:
+  sep: "\u2022"
+bar:
+  fill: "\u25CF"
+  empty: "\u25CB"
+  width: 10
+  left: "("
+  right: ")"
+colors:
+  model: bold-amber
+  dim: gray
+  sep: sand
+  duration: cream
+  cost: bold-rust
+  added: olive
+  removed: red
+  context_ok: olive
+  context_warn: amber
+  context_crit: red
+  git_branch: gold
+  git_sha: khaki
+  git_dirty: amber
+  git_clean: olive
+  git_staged: olive
+  git_unstaged: amber
+  git_untracked: wheat
+  git_ahead: lime
+  git_behind: terracotta
+  session_id: denim
+  version: mauve
+  tokens_in: steel
+  tokens_out: sage
+  cache: rust
+  api_duration: dijon
+  exceeds_200k: red
+  cwd: khaki
+  project_dir: silver
+  plan: white
+  plan_title: coral
+  transcript_path: sand
+  current_dir: orange
+  added_dirs: cadet
+  context_window_size: silver
+  turn_input: steel
+  turn_output: sage
+  cache_creation: dijon
+  model_id: denim
+  repo_url: cadet
+  theme: amber
+  rate_ok: olive
+  rate_warn: amber
+  rate_crit: red
+  rate_reset: dijon

@@ -1,0 +1,10 @@
+{
+  "name": "statusline",
+  "version": "0.1.0",
+  "description": "ANSI-colored terminal status line for Claude Code — model, cost, context, git, rate limits",
+  "author": {
+    "name": "Brian Claridge"
+  },
+  "license": "MIT",
+  "keywords": ["statusline", "terminal", "ansi", "themes"]
+}

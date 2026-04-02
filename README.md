@@ -2,6 +2,10 @@
 
 ANSI-colored terminal status line for Claude Code. Model, cost, context, git, rate limits. 5 themes.
 
+> DISCLOSURE. This was created with the help of Claude Code.
+
+![demo](demo.webp)
+
 ## Install
 
 ### Option A: Git submodule (recommended)

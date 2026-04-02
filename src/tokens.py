@@ -151,23 +151,48 @@ def build_tokens(
         else:
             tokens[f"rate_{label}_reset"] = dim_default(f"rate_{label}_reset")
 
-    # -- cwd (last 2 path segments) --
+    # -- path display helpers --
+
+    def _unix_path(p: str) -> str:
+        """Convert any path to Unix-style: D:\\foo\\bar -> /d/foo/bar."""
+        p = p.replace("\\", "/")
+        # Windows drive letter: C:/foo -> /c/foo
+        if len(p) >= 2 and p[1] == ":":
+            p = "/" + p[0].lower() + p[2:]
+        return p
+
+    def _relative_or_unix(child: str, parent: str) -> str:
+        """Show child relative to parent: ./sub, ../sibling, or full Unix-style."""
+        import posixpath
+        uc = _unix_path(child)
+        up = _unix_path(parent)
+        # Only compute relative if same root (both /d/... or both /home/...)
+        uc_parts = uc.strip("/").split("/")
+        up_parts = up.strip("/").split("/")
+        if not up or not uc_parts or not up_parts or uc_parts[0] != up_parts[0]:
+            return uc
+        rel = posixpath.relpath(uc, up)
+        if rel == ".":
+            return uc
+        if not rel.startswith(".."):
+            return "./" + rel
+        return rel
+
+    # -- cwd --
 
     cwd_raw = data.get("cwd", "")
+    project_dir = data.get("workspace", {}).get("project_dir", "")
     cwdc = colors.get("cwd", dim)
     if cwd_raw:
-        from pathlib import PurePath
-        parts = PurePath(cwd_raw).parts
-        cwd_short = "/".join(parts[-2:]) if len(parts) >= 2 else cwd_raw
-        tokens["cwd"] = f"{c(cwdc)}{cwd_short}{RESET}"
+        cwd_display = _relative_or_unix(cwd_raw, project_dir) if project_dir else _unix_path(cwd_raw)
+        tokens["cwd"] = f"{c(cwdc)}{cwd_display}{RESET}"
     else:
         tokens["cwd"] = dim_default("cwd")
 
-    # -- project_dir (full path from workspace) --
+    # -- project_dir --
 
-    project_dir = data.get("workspace", {}).get("project_dir", "")
     pdc = colors.get("project_dir", dim)
-    tokens["project_dir"] = f"{c(pdc)}{project_dir}{RESET}" if project_dir else dim_default("project_dir")
+    tokens["project_dir"] = f"{c(pdc)}{_unix_path(project_dir)}{RESET}" if project_dir else dim_default("project_dir")
 
     # -- transcript path --
 
@@ -180,7 +205,11 @@ def build_tokens(
     ws = data.get("workspace", {})
     current_dir = ws.get("current_dir", "")
     cdc = colors.get("current_dir", dim)
-    tokens["current_dir"] = f"{c(cdc)}{current_dir}{RESET}" if current_dir else dim_default("current_dir")
+    if current_dir:
+        cd_display = _relative_or_unix(current_dir, project_dir) if project_dir else _unix_path(current_dir)
+        tokens["current_dir"] = f"{c(cdc)}{cd_display}{RESET}"
+    else:
+        tokens["current_dir"] = dim_default("current_dir")
 
     added_dirs = ws.get("added_dirs", [])
     adc2 = colors.get("added_dirs", dim)

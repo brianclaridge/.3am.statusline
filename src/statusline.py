@@ -24,37 +24,17 @@ ROOT = _SCRIPT_DIR.parent
 CACHE_PATH = resolve_path(ROOT, CONFIG.get("cache", {}).get("file", ".data/statusline-cache.json"))
 
 
-def _read_transcript_slug(transcript_path: str) -> str:
-    """Read the plan slug from the session transcript, scanning backwards."""
-    if not transcript_path:
-        return ""
+def _find_latest_plan(plans_dir: Path) -> Path | None:
+    """Return the most recently modified .md file in the plans directory."""
     try:
-        tp = Path(transcript_path)
-        if not tp.exists():
-            return ""
-        with open(tp, "rb") as f:
-            f.seek(0, 2)
-            size = f.tell()
-            if size == 0:
-                return ""
-            # Read the tail of the file (last 32KB should be plenty)
-            read_size = min(size, 32768)
-            f.seek(size - read_size)
-            buf = f.read(read_size)
-        # Scan lines backwards until we find one with a slug
-        for line in reversed(buf.split(b"\n")):
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                slug = json.loads(line).get("slug", "")
-                if slug:
-                    return slug
-            except (json.JSONDecodeError, ValueError):
-                continue
-        return ""
+        if not plans_dir.is_dir():
+            return None
+        plans = list(plans_dir.glob("*.md"))
+        if not plans:
+            return None
+        return max(plans, key=lambda p: p.stat().st_mtime)
     except Exception:
-        return ""
+        return None
 
 
 def _now_ms() -> float:
@@ -80,11 +60,6 @@ def _write_git_cache(git_data: dict, ts: float) -> None:
     except Exception:
         pass
 
-
-def _is_random_slug(slug: str) -> bool:
-    """Detect Claude's random 3-word slugs (e.g. 'calm-twirling-hopcroft')."""
-    parts = slug.split("-")
-    return len(parts) == 3 and all(p.isalpha() for p in parts)
 
 
 def _extract_plan_title(plan_path: Path) -> str:
@@ -135,47 +110,30 @@ def _extract_plan_title(plan_path: Path) -> str:
 
 
 def _detect_active_plan(data: dict) -> dict[str, str]:
-    """Detect active plan from the transcript slug field.
+    """Detect active plan from the most recently modified file in plansDirectory.
 
-    Title fallback chain:
-      plan .md # heading
-        -> plan .md frontmatter title:
-          -> plan .md first content line
-            -> session_name (if not a random slug)
-              -> empty (shows dim default)
+    Filename (stem) = slug, H1 heading = title.
     """
-    no_plan = {"slug": "--", "title": "no active plan"}
-    transcript_path = data.get("transcript_path", "")
-    slug = _read_transcript_slug(transcript_path)
-    if not slug:
+    no_plan = {"slug": "", "title": ""}
+    project_dir = data.get("workspace", {}).get("project_dir", "") or data.get("cwd", "")
+    if not project_dir:
         return no_plan
 
+    # Read plansDirectory from project settings (fall back to .claude/plans)
+    plans_rel = ".claude/plans"
     try:
-        project_dir = data.get("workspace", {}).get("project_dir", "") or data.get("cwd", "")
-
-        # Try plan file first
-        if project_dir:
-            # Read plansDirectory from project settings (fall back to .claude/plans)
-            plans_rel = ".claude/plans"
-            try:
-                settings = json.loads((Path(project_dir) / ".claude" / "settings.json").read_text(encoding="utf-8"))
-                plans_rel = settings.get("plansDirectory", plans_rel)
-            except Exception:
-                pass
-            plan_path = Path(project_dir) / plans_rel / f"{slug}.md"
-            if plan_path.exists():
-                title = _extract_plan_title(plan_path)
-                if title:
-                    return {"slug": slug, "title": title}
-
-        # Fallback: session_name if it's not a random slug
-        session_name = data.get("session_name", "")
-        if session_name and not _is_random_slug(session_name):
-            return {"slug": slug, "title": session_name}
-
-        return {"slug": slug, "title": ""}
+        settings = json.loads((Path(project_dir) / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        plans_rel = settings.get("plansDirectory", plans_rel)
     except Exception:
-        return {"slug": slug, "title": ""}
+        pass
+
+    latest = _find_latest_plan(Path(project_dir) / plans_rel)
+    if not latest:
+        return no_plan
+
+    slug = latest.stem
+    title = _extract_plan_title(latest)
+    return {"slug": slug, "title": title}
 
 
 def main() -> None:

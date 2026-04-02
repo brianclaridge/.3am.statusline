@@ -36,7 +36,7 @@ tasks:
         --verbose
         --remote-control
         --plugin-dir {{toSlash .TASKFILE_DIR}}
-        --plugin-dir {{toSlash .TASKFILE_DIR}}/.claude/tts-agent
+        --plugin-dir {{toSlash .TASKFILE_DIR}}/.claude/statusline
     cmds:
       - 'echo "CLAUDE_MODEL: {{.CLAUDE_MODEL}}"'
       - 'echo "CLAUDE_CONFIG_DIR: {{.CLAUDE_CONFIG_DIR}}"'

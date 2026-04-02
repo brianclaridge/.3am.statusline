@@ -45,12 +45,7 @@
     "deny": [],
     "ask": ["Bash(rm:*)"],
     "defaultMode": "plan",
-    "additionalDirectories": [
-      ".claude",
-      ".claude/agents",
-      ".claude/rules",
-      ".claude/skills"
-    ]
+    "additionalDirectories": []
   },
   "spinnerTipsOverride": {
     "tips": ["Stay hydrated..."],

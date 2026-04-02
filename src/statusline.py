@@ -25,7 +25,7 @@ CACHE_PATH = resolve_path(ROOT, CONFIG.get("cache", {}).get("file", ".data/statu
 
 
 def _read_transcript_slug(transcript_path: str) -> str:
-    """Read the plan slug from the last entry of the session transcript."""
+    """Read the plan slug from the session transcript, scanning backwards."""
     if not transcript_path:
         return ""
     try:
@@ -34,22 +34,25 @@ def _read_transcript_slug(transcript_path: str) -> str:
             return ""
         with open(tp, "rb") as f:
             f.seek(0, 2)
-            pos = f.tell()
-            if pos == 0:
+            size = f.tell()
+            if size == 0:
                 return ""
-            # Read backwards to find the last newline
-            buf = b""
-            while pos > 0:
-                pos = max(0, pos - 4096)
-                f.seek(pos)
-                chunk = f.read(min(4096, f.tell() + 4096 - pos))
-                buf = chunk + buf
-                lines = buf.split(b"\n")
-                if len(lines) > 1:
-                    last_line = lines[-1] if lines[-1] else lines[-2]
-                    return json.loads(last_line).get("slug", "")
-            # Single line file
-            return json.loads(buf).get("slug", "")
+            # Read the tail of the file (last 32KB should be plenty)
+            read_size = min(size, 32768)
+            f.seek(size - read_size)
+            buf = f.read(read_size)
+        # Scan lines backwards until we find one with a slug
+        for line in reversed(buf.split(b"\n")):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                slug = json.loads(line).get("slug", "")
+                if slug:
+                    return slug
+            except (json.JSONDecodeError, ValueError):
+                continue
+        return ""
     except Exception:
         return ""
 
@@ -78,29 +81,94 @@ def _write_git_cache(git_data: dict, ts: float) -> None:
         pass
 
 
+def _is_random_slug(slug: str) -> bool:
+    """Detect Claude's random 3-word slugs (e.g. 'calm-twirling-hopcroft')."""
+    parts = slug.split("-")
+    return len(parts) == 3 and all(p.isalpha() for p in parts)
+
+
+def _extract_plan_title(plan_path: Path) -> str:
+    """Extract title from plan file via fallback chain:
+    1. # heading
+    2. YAML frontmatter title:
+    3. First non-blank content line (truncated)
+    """
+    try:
+        text = plan_path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
+
+    lines = text.splitlines()
+    in_frontmatter = False
+    frontmatter_title = ""
+    content_start = 0
+
+    for i, line in enumerate(lines):
+        # YAML frontmatter detection
+        if i == 0 and line.strip() == "---":
+            in_frontmatter = True
+            continue
+        if in_frontmatter:
+            if line.strip() == "---":
+                in_frontmatter = False
+                content_start = i + 1
+                continue
+            if line.strip().startswith("title:"):
+                frontmatter_title = line.split(":", 1)[1].strip().strip("\"'")
+            continue
+
+        # # heading — best signal, return immediately
+        if line.startswith("# "):
+            return line[2:].strip()
+
+    # Fallback: frontmatter title
+    if frontmatter_title:
+        return frontmatter_title
+
+    # Fallback: first non-blank content line
+    for line in lines[content_start:]:
+        stripped = line.strip()
+        if stripped and not stripped.startswith(("#", "---", "```")):
+            return stripped[:80]
+
+    return ""
+
+
 def _detect_active_plan(data: dict) -> dict[str, str]:
-    """Detect active plan from the transcript slug field (authoritative, self-contained)."""
+    """Detect active plan from the transcript slug field.
+
+    Title fallback chain:
+      plan .md # heading
+        -> plan .md frontmatter title:
+          -> plan .md first content line
+            -> session_name (if not a random slug)
+              -> empty (shows dim default)
+    """
     no_plan = {"slug": "--", "title": "no active plan"}
     transcript_path = data.get("transcript_path", "")
     slug = _read_transcript_slug(transcript_path)
     if not slug:
         return no_plan
-    # Derive plan file path from the user's project dir (not plugin root)
+
     try:
         project_dir = data.get("workspace", {}).get("project_dir", "") or data.get("cwd", "")
-        if not project_dir:
-            return {"slug": slug, "title": slug}
-        plans_dir = Path(project_dir) / ".claude" / "plans"
-        plan_path = plans_dir / f"{slug}.md"
-        title = ""
-        if plan_path.exists():
-            for line in plan_path.read_text(encoding="utf-8").splitlines():
-                if line.startswith("# "):
-                    title = line[2:].strip()
-                    break
-        return {"slug": slug, "title": title or slug}
+
+        # Try plan file first
+        if project_dir:
+            plan_path = Path(project_dir) / ".claude" / "plans" / f"{slug}.md"
+            if plan_path.exists():
+                title = _extract_plan_title(plan_path)
+                if title:
+                    return {"slug": slug, "title": title}
+
+        # Fallback: session_name if it's not a random slug
+        session_name = data.get("session_name", "")
+        if session_name and not _is_random_slug(session_name):
+            return {"slug": slug, "title": session_name}
+
+        return {"slug": slug, "title": ""}
     except Exception:
-        return {"slug": slug, "title": slug}
+        return {"slug": slug, "title": ""}
 
 
 def main() -> None:

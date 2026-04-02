@@ -18,7 +18,7 @@
   "teammateMode": "auto",
   "plansDirectory": ".claude/plans",
   "autoUpdatesChannel": "latest",
-  "outputStyle": "cto",
+  "outputStyle": "default",
   "spinnerTipsEnabled": true,
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",

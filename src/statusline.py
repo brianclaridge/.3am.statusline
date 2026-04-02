@@ -155,7 +155,14 @@ def _detect_active_plan(data: dict) -> dict[str, str]:
 
         # Try plan file first
         if project_dir:
-            plan_path = Path(project_dir) / ".claude" / "plans" / f"{slug}.md"
+            # Read plansDirectory from project settings (fall back to .claude/plans)
+            plans_rel = ".claude/plans"
+            try:
+                settings = json.loads((Path(project_dir) / ".claude" / "settings.json").read_text(encoding="utf-8"))
+                plans_rel = settings.get("plansDirectory", plans_rel)
+            except Exception:
+                pass
+            plan_path = Path(project_dir) / plans_rel / f"{slug}.md"
             if plan_path.exists():
                 title = _extract_plan_title(plan_path)
                 if title:

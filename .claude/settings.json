@@ -1,0 +1,7 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run src/statusline.py",
+    "padding": 2
+  }
+}

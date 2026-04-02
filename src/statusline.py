@@ -118,10 +118,14 @@ def main() -> None:
     now_ms = _now_ms()
     git_cache_hit = bool(cached_git and (now_ms - git_ts) < git_interval)
 
+    # Use the user's project dir for git info, not the plugin's own dir
+    project_dir = data.get("workspace", {}).get("project_dir", "") or data.get("cwd", "")
+    git_root = Path(project_dir) if project_dir else ROOT
+
     if git_cache_hit:
         git_data = cached_git
     else:
-        git_data = get_git_info(ROOT)
+        git_data = get_git_info(git_root)
         _write_git_cache(git_data, now_ms)
 
     # Detect active plan from .active-context cache

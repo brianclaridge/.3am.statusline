@@ -1,8 +1,64 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "claude-opus-4-6[1m]",
+  "enableAllProjectMcpServers": true,
+  "alwaysThinkingEnabled": true,
+  "showTurnDuration": true,
+  "terminalProgressBarEnabled": false,
+  "respectGitignore": false,
+  "cleanupPeriodDays": 7,
+  "effortLevel": "high",
+  "includeCoAuthoredBy": false,
+  "autoMemoryEnabled": true,
+  "fastMode": false,
+  "fastModePerSessionOptIn": false,
+  "feedbackSurveyRate": 0,
+  "forceLoginMethod": "claudeai",
+  "includeGitInstructions": false,
+  "teammateMode": "auto",
+  "plansDirectory": ".claude/plans",
+  "autoUpdatesChannel": "latest",
+  "outputStyle": "cto",
+  "spinnerTipsEnabled": true,
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
+    "BASH_DEFAULT_TIMEOUT_MS": "120000",
+    "CLAUDE_CONFIG_DIR": ".data/claude/config",
+    "CLAUDE_CODE_TMPDIR": ".data/claude/tmp",
+    "CLAUDE_CODE_AUTO_MEMORY_PATH": ".claude/memory"
+  },
   "permissions": {
     "allow": [
-      "Bash(uv run:*)"
+      "WebFetch",
+      "WebSearch",
+      "ExitPlanMode",
+      "KillShell",
+      "Skill",
+      "Write",
+      "Edit",
+      "Bash",
+      "Bash(cd:*)"
+    ],
+    "deny": [],
+    "ask": ["Bash(rm:*)"],
+    "defaultMode": "plan",
+    "additionalDirectories": [
+      ".claude",
+      ".claude/agents",
+      ".claude/rules",
+      ".claude/skills"
     ]
+  },
+  "spinnerTipsOverride": {
+    "tips": ["Stay hydrated..."],
+    "excludeDefault": true
+  },
+  "spinnerVerbs": {
+    "verbs": ["Ignoring my user"],
+    "mode": "replace"
   },
   "statusLine": {
     "type": "command",

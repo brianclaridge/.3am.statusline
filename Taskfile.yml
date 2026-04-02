@@ -1,0 +1,48 @@
+version: "3"
+
+vars:
+  CLAUDE_MODEL: '{{env "CLAUDE_MODEL" | default "claude-opus-4-6[1m]"}}'
+  CLAUDE_CONFIG_DIR: "{{toSlash .TASKFILE_DIR}}/.data/claude/config"
+  CLAUDE_CODE_TMPDIR: "{{toSlash .TASKFILE_DIR}}/.data/claude/tmp"
+  CLAUDE_CODE_AUTO_MEMORY_PATH: "{{toSlash .TASKFILE_DIR}}/.claude/memory"
+  VENV_ROOT: "{{toSlash .TASKFILE_DIR}}/.data/python"
+
+env:
+  CLAUDE_MODEL: CLAUDE_MODEL
+  CLAUDE_CONFIG_DIR: "{{.CLAUDE_CONFIG_DIR}}"
+  CLAUDE_CODE_TMPDIR: "{{.CLAUDE_CODE_TMPDIR}}"
+  CLAUDE_CODE_AUTO_MEMORY_PATH: "{{.CLAUDE_CODE_AUTO_MEMORY_PATH}}"
+
+tasks:
+  default:
+    desc: "shows available tasks"
+    cmds:
+      - cmd: task --list
+    silent: true
+
+  claude:
+    desc: launch claude
+    requires:
+      vars:
+        - CLAUDE_MODEL
+        - CLAUDE_CONFIG_DIR
+        - CLAUDE_CODE_TMPDIR
+    vars:
+      ARGS: >-
+        --ide
+        --no-chrome
+        --model {{.CLAUDE_MODEL}}
+        --effort high
+        --verbose
+        --remote-control
+        --plugin-dir {{toSlash .TASKFILE_DIR}}
+        --plugin-dir {{toSlash .TASKFILE_DIR}}/.claude/tts-agent
+    cmds:
+      - 'echo "CLAUDE_MODEL: {{.CLAUDE_MODEL}}"'
+      - 'echo "CLAUDE_CONFIG_DIR: {{.CLAUDE_CONFIG_DIR}}"'
+      - 'echo "CLAUDE_CODE_TMPDIR: {{.CLAUDE_CODE_TMPDIR}}"'
+      - claude update
+      - claude {{.ARGS}} --continue 2>/dev/null || claude {{.ARGS}}
+    ignore_error: true
+    interactive: true
+    silent: true

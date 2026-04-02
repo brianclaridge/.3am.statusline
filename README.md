@@ -1,4 +1,4 @@
-# statusline
+# .3am.statusline
 
 ANSI-colored terminal status line for Claude Code. Model, cost, context, git, rate limits. 5 themes.
 
@@ -6,7 +6,7 @@ ANSI-colored terminal status line for Claude Code. Model, cost, context, git, ra
 
 ```bash
 # load as plugin (enables /statusline:theme skill)
-claude --plugin-dir /path/to/statusline
+claude --plugin-dir /path/to/.3am.statusline
 ```
 
 Add to your `settings.json` (or `.claude/settings.json`):
@@ -15,7 +15,7 @@ Add to your `settings.json` (or `.claude/settings.json`):
 {
   "statusLine": {
     "type": "command",
-    "command": "cd /path/to/statusline && uv run src/statusline.py",
+    "command": "cd /path/to/.3am.statusline && uv run src/statusline.py",
     "padding": 2
   }
 }

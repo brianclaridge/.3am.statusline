@@ -13,13 +13,12 @@
   "fastMode": false,
   "fastModePerSessionOptIn": false,
   "feedbackSurveyRate": 0,
+  "spinnerTipsEnabled": false,
   "forceLoginMethod": "claudeai",
   "includeGitInstructions": false,
   "teammateMode": "auto",
   "plansDirectory": ".claude/plans",
   "autoUpdatesChannel": "latest",
-  "outputStyle": "default",
-  "spinnerTipsEnabled": true,
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "50",
@@ -28,7 +27,8 @@
     "BASH_DEFAULT_TIMEOUT_MS": "120000",
     "CLAUDE_CONFIG_DIR": ".data/claude/config",
     "CLAUDE_CODE_TMPDIR": ".data/claude/tmp",
-    "CLAUDE_CODE_AUTO_MEMORY_PATH": ".claude/memory"
+    "CLAUDE_CODE_AUTO_MEMORY_PATH": ".claude/memory",
+    "DISABLE_AUTOUPDATER": "1"
   },
   "permissions": {
     "allow": [

@@ -1,0 +1,17 @@
+{
+  "name": "3am.bot",
+  "owner": {
+    "name": "Brian Claridge"
+  },
+  "metadata": {
+    "description": "ANSI-colored terminal status line for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "statusline",
+      "source": ".",
+      "description": "ANSI-colored terminal status line for Claude Code — model, cost, context, git, rate limits",
+      "version": "0.1.0"
+    }
+  ]
+}

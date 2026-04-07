@@ -161,7 +161,7 @@ def main() -> None:
         git_data = get_git_info(git_root)
         _write_git_cache(git_data, now_ms)
 
-    # Detect active plan from .active-context cache
+    # Detect active plan by scanning project's plansDirectory for newest *.md
     plan_info = _detect_active_plan(data)
 
     width = get_terminal_width()

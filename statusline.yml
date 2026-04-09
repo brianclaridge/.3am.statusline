@@ -1,6 +1,6 @@
 terminal_width: auto
 max_width: 80
-padding: 3
+padding: 1
 space_character: " "
 
 cache:

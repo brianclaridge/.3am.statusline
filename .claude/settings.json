@@ -17,7 +17,7 @@
   "forceLoginMethod": "claudeai",
   "includeGitInstructions": false,
   "teammateMode": "auto",
-  "plansDirectory": ".claude/plans",
+  "plansDirectory": ".data/claude/plans",
   "autoUpdatesChannel": "latest",
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",

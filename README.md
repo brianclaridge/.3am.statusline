@@ -11,7 +11,7 @@ ANSI-colored terminal status line for Claude Code. Model, cost, context, git, ra
 ### Option A: Git submodule (recommended)
 
 ```bash
-git submodule add https://github.com/brianclaridge/.3am.statusline .claude/statusline
+git submodule add https://github.com/brianclaridge/.3am.statusline .claude/plugins/brianclaridge/.3am.statusline
 ```
 
 Then add `--plugin-dir` to your claude invocation:

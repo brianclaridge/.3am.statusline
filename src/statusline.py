@@ -24,19 +24,6 @@ ROOT = _SCRIPT_DIR.parent
 CACHE_PATH = resolve_path(ROOT, CONFIG.get("cache", {}).get("file", ".data/statusline-cache.json"))
 
 
-def _find_latest_plan(plans_dir: Path) -> Path | None:
-    """Return the most recently modified .md file in the plans directory."""
-    try:
-        if not plans_dir.is_dir():
-            return None
-        plans = list(plans_dir.glob("*.md"))
-        if not plans:
-            return None
-        return max(plans, key=lambda p: p.stat().st_mtime)
-    except Exception:
-        return None
-
-
 def _now_ms() -> float:
     return time.time() * 1000
 
@@ -109,30 +96,95 @@ def _extract_plan_title(plan_path: Path) -> str:
     return ""
 
 
-def _detect_active_plan(data: dict) -> dict[str, str]:
-    """Detect active plan from the most recently modified file in plansDirectory.
+def _read_session_slug(transcript_path: str) -> str:
+    """Tail-scan a Claude Code transcript .jsonl for the most recent plan slug.
 
-    Filename (stem) = slug, H1 heading = title.
+    Reads the last ~64KB of the file, walks lines newest-to-oldest, json.loads
+    each one, and returns the first ``slug`` field it finds. Short metadata
+    lines (custom-title, agent-name, permission-mode) lack a slug, so we keep
+    walking until a conversational entry surfaces.
+
+    Returns "" on any failure (missing path, missing file, empty file, no slug).
+    """
+    if not transcript_path:
+        return ""
+    try:
+        path = Path(transcript_path)
+        if not path.is_file():
+            return ""
+        size = path.stat().st_size
+        if size == 0:
+            return ""
+        read_bytes = min(size, 64 * 1024)
+        with path.open("rb") as fh:
+            fh.seek(size - read_bytes)
+            chunk = fh.read(read_bytes)
+    except Exception:
+        return ""
+
+    # Drop a partial leading line if we didn't start at byte 0.
+    lines = chunk.split(b"\n")
+    if read_bytes < size and len(lines) > 1:
+        lines = lines[1:]
+
+    for raw in reversed(lines):
+        raw = raw.strip()
+        if not raw:
+            continue
+        try:
+            entry = json.loads(raw)
+        except Exception:
+            continue
+        slug = entry.get("slug") if isinstance(entry, dict) else None
+        if isinstance(slug, str) and slug:
+            return slug
+    return ""
+
+
+def _detect_active_plan(data: dict) -> dict[str, str]:
+    """Resolve the active plan for this session via the transcript.
+
+    Pulls the slug from the session's .jsonl transcript, then locates
+    ``<plans_dir>/<slug>.md`` under the configured plansDirectory (falling
+    back to ``.claude/plans``). Returns ``{"slug": "", "title": ""}`` on any
+    failure so the renderer falls through to ``defaults.plan`` /
+    ``defaults.plan_title`` from statusline.yml.
     """
     no_plan = {"slug": "", "title": ""}
+
+    slug = _read_session_slug(data.get("transcript_path", ""))
+    if not slug:
+        return no_plan
+
     project_dir = data.get("workspace", {}).get("project_dir", "") or data.get("cwd", "")
     if not project_dir:
         return no_plan
+    project_root = Path(project_dir)
 
-    # Read plansDirectory from project settings (fall back to .claude/plans)
-    plans_rel = ".claude/plans"
+    # Build candidate plansDirectory list: configured first, then default.
+    candidates: list[str] = []
     try:
-        settings = json.loads((Path(project_dir) / ".claude" / "settings.json").read_text(encoding="utf-8"))
-        plans_rel = settings.get("plansDirectory", plans_rel)
+        settings = json.loads(
+            (project_root / ".claude" / "settings.json").read_text(encoding="utf-8")
+        )
+        configured = settings.get("plansDirectory")
+        if isinstance(configured, str) and configured:
+            candidates.append(configured)
     except Exception:
         pass
+    if ".claude/plans" not in candidates:
+        candidates.append(".claude/plans")
 
-    latest = _find_latest_plan(Path(project_dir) / plans_rel)
-    if not latest:
+    plan_path: Path | None = None
+    for rel in candidates:
+        candidate = project_root / rel / f"{slug}.md"
+        if candidate.is_file():
+            plan_path = candidate
+            break
+    if plan_path is None:
         return no_plan
 
-    slug = latest.stem
-    title = _extract_plan_title(latest)
+    title = _extract_plan_title(plan_path)
     return {"slug": slug, "title": title}
 
 
@@ -161,7 +213,7 @@ def main() -> None:
         git_data = get_git_info(git_root)
         _write_git_cache(git_data, now_ms)
 
-    # Detect active plan by scanning project's plansDirectory for newest *.md
+    # Detect active plan via the session transcript, then look up its plan file
     plan_info = _detect_active_plan(data)
 
     width = get_terminal_width()
